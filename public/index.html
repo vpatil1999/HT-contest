@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 300px;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form div {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result,
+        #resultMessage {
+            margin-top: 15px;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .nav {
+            margin: 20px;
+            text-align: center;
+        }
+
+        .nav button {
+            background-color: #28a745;
+        }
+
+        .nav button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" style="margin-top: 10%;">
+        <h1>Prediction App</h1>
+        <form id="registrationForm">
+            <div>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+            </div>
+            <div>
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" placeholder="Enter your age" required>
+            </div>
+            <div>
+                <label for="prediction">Prediction:</label>
+                <select id="prediction" name="prediction" required>
+                    <option value="" disabled selected>Select your prediction</option>
+                    <option value="Head">Head</option>
+                    <option value="Tail">Tail</option>
+                </select>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <div id="result" style="color: chocolate;"></div>
+    </div>
+
+    <div class="nav">
+        <button id="getResult">Get Result</button>
+        <div id="resultMessage"></div>
+    </div>
+
+    <!-- Include Axios from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const name = (document.getElementById('name')).value;
+            const ageString = (document.getElementById('age')).value;
+            const prediction = (document.getElementById('prediction')).value;
+            const age = parseInt(ageString, 10);
+            if (isNaN(age) || age < 0) {
+                (document.getElementById('result')).textContent = 'Error: Age must be a valid positive number.';
+                return;
+            }
+            try {
+                const response = await axios.post('/api/register', {
+                    name,
+                    age,
+                    prediction
+                });
+                console.log('response :', response.data.data);
+                (document.getElementById('result')).textContent = typeof response.data.data === "string" ? response.data.data : "Done";
+                if (response) {
+                    (document.getElementById('name')).value = '';
+                    (document.getElementById('age')).value = '';
+                    (document.getElementById('prediction')).value = '';
+                }
+            } catch (error) {
+                (document.getElementById('result')).textContent = `Error: ${error.message}`;
+            }
+        });
+        document.getElementById('getResult').addEventListener('click', async () => {
+            try {
+                const response = await axios.get('/api/result');
+                console.log('response :', response.data.data);
+                (document.getElementById('resultMessage')).textContent = response.data.data;
+            } catch (error) {
+                (document.getElementById('resultMessage')).textContent = error?.message;
+            }
+        });
+    </script>
+</body>
+
+</html>

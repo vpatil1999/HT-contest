@@ -1,14 +1,16 @@
 {
   "name": "ht-contest",
   "version": "1.0.0",
-  "description": "",
+ "description": "A contest registration and prediction system",
   "main": "index.js",
   "scripts": {
     "test": "mocha test/routes.test.js",
-    "start": "nodemon src/server.js"
+    "start": "nodemon src/server.js",
+    "prisma:db:pull:generate": "npx prisma db pull && npx prisma generate",
+    "prisma:generate": "npx prisma generate"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["contest", "prediction"],
+  "author": "Vaibhav Patil",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.17.0",
